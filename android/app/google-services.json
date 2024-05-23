@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "562937323049",
+    "project_id": "parking-d4a82",
+    "storage_bucket": "parking-d4a82.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562937323049:android:5744b67ac4ae012b228638",
+        "android_client_info": {
+          "package_name": "fer.iot.parking.parking"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGJWfnZgv_V3QbQACuUT2NC08FP93EWjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
