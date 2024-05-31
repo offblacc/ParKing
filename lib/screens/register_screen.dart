@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late String _email, _password;
@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Welcome Back',
+                    'Create Account',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 20),
@@ -70,8 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: _login,
-                    child: Text('Login'),
+                    onPressed: _register,
+                    child: Text('Register'),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
@@ -88,20 +88,28 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _login() async {
+  Future<void> _register() async {
     final formState = _formKey.currentState;
     if (formState != null && formState.validate()) {
       formState.save();
       try {
-        UserCredential user = await _auth.signInWithEmailAndPassword(
-            email: _email, password: _password);
-        Navigator.pushReplacementNamed(context, '/home');
+        UserCredential user = await _auth.createUserWithEmailAndPassword(
+          email: _email,
+          password: _password,
+        );
+
+        await user.user!.sendEmailVerification();
+
+        setState(() {
+          _errorMessage = 'Verification email sent. Please check your inbox, then login'
+              '.';
+        });
+
+        // Optionally, navigate to another screen or ask the user to check their email
       } catch (e) {
         setState(() {
-          _errorMessage = 'Wrong email or password';
+          _errorMessage = e.toString();
         });
-        print(e);
-        // Handle errors
       }
     }
   }

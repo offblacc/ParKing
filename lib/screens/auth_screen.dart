@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'register_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class AuthScreen extends StatelessWidget {
   @override

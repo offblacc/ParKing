@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class RegisterScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late String _email, _password;
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register'),
+        title: Text('Login'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,9 +28,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Create Account',
+                    'Welcome Back',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
+                  SizedBox(height: 20),
+                  if (_errorMessage != null)
+                    Text(
+                      _errorMessage!,
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
                   SizedBox(height: 20),
                   TextFormField(
                     validator: (input) {
@@ -63,8 +70,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: _register,
-                    child: Text('Register'),
+                    onPressed: _login,
+                    child: Text('Login'),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
@@ -81,19 +88,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Future<void> _register() async {
+  Future<void> _login() async {
     final formState = _formKey.currentState;
     if (formState != null && formState.validate()) {
       formState.save();
       try {
-        UserCredential user = await _auth.createUserWithEmailAndPassword(
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _email,
           password: _password,
         );
-        Navigator.pushReplacementNamed(context, '/home');
+
+        User? user = userCredential.user;
+
+        if (user != null && !user.emailVerified) {
+          await user.sendEmailVerification();
+          setState(() {
+            _errorMessage = 'Email not verified. Verification email sent again. Please check your inbox.';
+          });
+        } else if (user != null && user.emailVerified) {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
       } catch (e) {
+        setState(() {
+          _errorMessage = 'Login failed. Please check your email and password.';
+        });
         print(e);
-        // Handle errors
       }
     }
   }
