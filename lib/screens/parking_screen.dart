@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parking/models/parking_location.dart';
+import 'package:parking/screens/parking_layout_screen.dart';
 
 class ParkingScreen extends StatelessWidget {
   final ParkingLocation parkingLocation;
@@ -49,7 +50,16 @@ class ParkingScreen extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // TODO implement navigation to parking layout screen here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return ParkingLayoutScreen(
+                          parkingLocation: parkingLocation,
+                        );
+                      },
+                    ),
+                  );
                 },
                 child: const Text('Show Layout'),
               ),
