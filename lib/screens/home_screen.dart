@@ -8,7 +8,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  DatabaseReference _dbRef = FirebaseDatabase.instance.ref().child('userCount');
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref().child('userCount');
   int userCount = 0;
 
   @override
@@ -17,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _dbRef.onValue.listen((event) {
       setState(() {
         userCount = int.parse(event.snapshot.value.toString());
+        print("Updated user count: $userCount");
       });
     });
   }

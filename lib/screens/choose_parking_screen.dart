@@ -1,19 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
-class ParkingLocation {
-  final String name;
-  final String address;
-  final String redova;
-  final String stupaca;
-
-  ParkingLocation({
-    required this.name,
-    required this.address,
-    required this.redova,
-    required this.stupaca,
-  });
-}
+import 'package:parking/screens/parking_screen.dart';
+import 'package:parking/models/parking_location.dart';
 
 class ChooseParkingScreen extends StatefulWidget {
   @override
@@ -23,8 +11,7 @@ class ChooseParkingScreen extends StatefulWidget {
 class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
   final DatabaseReference _parkingRef =
       FirebaseDatabase.instance.ref().child('parkingLocations');
-  Map<int, Map<String, String>> parkingLocations = <int, Map<String, String>>{};
-  var parkingIds = <int>[];
+  List<ParkingLocation> parkingLocations = [];
 
   @override
   void initState() {
@@ -33,6 +20,7 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
   }
 
   Future<void> _fetchParkingLocations() async {
+    Map<int, Map<String, String>> locationsMap = <int, Map<String, String>>{};
     print("Fetching parking locations started");
     DatabaseEvent event = await _parkingRef.once(DatabaseEventType.value);
     print("Fetching parking locations completed");
@@ -43,7 +31,7 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
       final childRef = _parkingRef.child(childKey);
       Map<String, String> childValue = <String, String>{};
 
-      // jako sloppy napisano, neda mi se.. u biti child je svaki parking a childchild su propertiji unutar childa dakle od parkinga...
+      // jako sloppy napisano, neda mi se.. u biti child je svaki parking a childchild su propertiji unutar childa dakle od parkinga konkretnog...
       DatabaseEvent childEvent = await childRef.once(DatabaseEventType.value);
       for (var childChild in childEvent.snapshot.children) {
         String childChildKey = childChild.key?.toString() ?? '';
@@ -51,12 +39,24 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
         childValue[childChildKey] = childChildValue;
       }
 
-      parkingLocations[i++] = childValue;
+      locationsMap[i++] = childValue;
     }
-    parkingIds = parkingLocations.keys.toList();
-    print(parkingIds);
+
+    print("Locations map: $locationsMap");
+    for (int i = 0; i < locationsMap.length; i++) {
+      Map<String, String> locationMap = locationsMap[i]??{};
+      ParkingLocation location = ParkingLocation(
+        id: '0',
+        name: locationMap['name'] ?? '',
+        address: locationMap['address'] ?? '',
+        stupaca: locationMap['stupaca'] ?? '0',
+        redova: locationMap['redova'] ?? '0',
+      );
+      parkingLocations.add(location);
+    }
+
     setState(() {
-      parkingLocations = parkingLocations;
+      //parkingLocations = parkingLocations;
     });
     return;
   }
@@ -64,24 +64,30 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Choose Parking Location'),
-        ),
-        body: parkingLocations.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                itemCount: parkingLocations.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(parkingLocations[index]!['name'] ?? ''),
-                    subtitle: Text(parkingLocations[index]!['address'] ?? ''),
+      appBar: AppBar(
+        title: Text('Choose Parking Location'),
+      ),
+      body: parkingLocations.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: parkingLocations.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                    title: Text(parkingLocations[index].name),
+                    subtitle: Text(parkingLocations[index].address ?? ''),
                     onTap: () {
-                      // TODO implement _navigateToParkingDetails(context, parkingLocations[index]);
-                    },
-                  );
-                },
-              ),
-        );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return ParkingScreen(
+                            parkingLocation: parkingLocations[index],
+                          );
+                        }),
+                      );
+                    });
+              },
+            ),
+    );
   }
 
   void _navigateToParkingDetails(
