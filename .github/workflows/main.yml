@@ -53,7 +53,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: /home/runner/work/ParKing/ParKing/build/app/outputs/flutter-apk/app-release.apk
 
       - name: Create GitHub Release
         id: create_release
