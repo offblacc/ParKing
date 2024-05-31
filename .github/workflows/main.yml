@@ -39,6 +39,8 @@ jobs:
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+      - name: List APK directory contents
+        run: pwd && ls -R build/app/outputs/flutter-apk/
   release:
     needs: build
     runs-on: ubuntu-latest
