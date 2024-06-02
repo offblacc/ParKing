@@ -24,8 +24,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, '/login');
+    Navigator.of(context).pushNamedAndRemoveUntil('/authscreen', (Route<dynamic> route) => false);
   }
+
 
   @override
   Widget build(BuildContext context) {

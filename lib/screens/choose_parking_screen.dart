@@ -89,9 +89,4 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
             ),
     );
   }
-
-  void _navigateToParkingDetails(
-      BuildContext context, ParkingLocation location) {
-    // TODO implement navigation to parking details screen here
-  }
 }

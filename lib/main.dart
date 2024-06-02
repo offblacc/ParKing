@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => HomeScreen(),
         '/chooseParking': (context) => ChooseParkingScreen(),
+        '/authscreen': (context) => AuthScreen(),
       },
     );
   }
