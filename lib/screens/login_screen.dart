@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,17 +27,17 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Welcome Back',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   if (_errorMessage != null)
                     Text(
                       _errorMessage!,
-                      style: TextStyle(color: Colors.red, fontSize: 16),
+                      style: const TextStyle(color: Colors.red, fontSize: 16),
                     ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     validator: (input) {
                       if (input == null || input.isEmpty) {
@@ -46,13 +46,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                     onSaved: (input) => _email = input!,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     validator: (input) {
                       if (input == null || input.length < 6) {
@@ -61,23 +61,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                     onSaved: (input) => _password = input!,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Password',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.lock),
                     ),
                     obscureText: true,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _login,
-                    child: Text('Login'),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
+                    child: const Text('Login'),
                   ),
                 ],
               ),
@@ -106,13 +106,14 @@ class _LoginScreenState extends State<LoginScreen> {
             _errorMessage = 'Email not verified. Verification email sent again. Please check your inbox.';
           });
         } else if (user != null && user.emailVerified) {
-          Navigator.pushReplacementNamed(context, '/home');
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/home');
+          }
         }
       } catch (e) {
         setState(() {
           _errorMessage = 'Login failed. Please check your email and password.';
         });
-        print(e);
       }
     }
   }

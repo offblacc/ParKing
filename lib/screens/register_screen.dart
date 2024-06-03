@@ -16,7 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Register'),
+        title: const Text('Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,17 +27,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Create Account',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   if (_errorMessage != null)
                     Text(
                       _errorMessage!,
-                      style: TextStyle(color: Colors.red, fontSize: 16),
+                      style: const TextStyle(color: Colors.red, fontSize: 16),
                     ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     validator: (input) {
                       if (input == null || input.isEmpty) {
@@ -46,13 +46,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                     onSaved: (input) => _email = input!,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Email',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     validator: (input) {
                       if (input == null || input.length < 6) {
@@ -61,23 +61,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return null;
                     },
                     onSaved: (input) => _password = input!,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Password',
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.lock),
                     ),
                     obscureText: true,
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: _register,
-                    child: Text('Register'),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
+                    child: const Text('Register'),
                   ),
                 ],
               ),
@@ -101,11 +102,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         await user.user!.sendEmailVerification();
 
         setState(() {
-          _errorMessage = 'Verification email sent. Please check your inbox, then login'
+          _errorMessage =
+              'Verification email sent. Please check your inbox, then login'
               '.';
         });
-
-        // Optionally, navigate to another screen or ask the user to check their email
       } catch (e) {
         setState(() {
           _errorMessage = e.toString();

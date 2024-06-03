@@ -22,11 +22,18 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
     _checkUserRootStatus();
   }
 
-  Future<void> _fetchParkingLocations() async {
+  // check user root status je puno brzi, zato se prvo awaita, jer prva
+  // funkcija prvo cleara listu parkinga, pa onda bude prazan screen,
+  // ovako se ODMAH pri PRVOM renderu prikaze novi parking list
+  Future<void> _refresh() async {
+    await _fetchParkingLocations();
+    _checkUserRootStatus();
+  }
+
+  Future<void> _fetchParkingLocations({bool rebuild = true}) async {
+    parkingLocations.clear();
     Map<int, Map<String, String>> locationsMap = <int, Map<String, String>>{};
-    print("Fetching parking locations started");
     DatabaseEvent event = await _parkingRef.once(DatabaseEventType.value);
-    print("Fetching parking locations completed");
 
     int i = 0;
     for (var child in event.snapshot.children) {
@@ -45,9 +52,8 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
       locationsMap[i++] = childValue;
     }
 
-    print("Locations map: $locationsMap");
     for (int i = 0; i < locationsMap.length; i++) {
-      Map<String, String> locationMap = locationsMap[i]??{};
+      Map<String, String> locationMap = locationsMap[i] ?? {};
       ParkingLocation location = ParkingLocation(
         id: '0',
         name: locationMap['name'] ?? '',
@@ -57,25 +63,33 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
       );
       parkingLocations.add(location);
     }
-
+    if (!rebuild) {
+      return;
+    }
     setState(() {
       //parkingLocations = parkingLocations;
     });
     return;
   }
 
-  Future<void> _checkUserRootStatus() async {
+  Future<void> _checkUserRootStatus({bool rebuild = true}) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return;
     } // redundant, has to be logged in, but let's keep this here...
 
-    final currentUserDbRef = FirebaseDatabase.instance.ref().child('writePermissionUsers/${user.uid}');
-    final DatabaseEvent event = await currentUserDbRef.once(DatabaseEventType.value);
+    final currentUserDbRef = FirebaseDatabase.instance
+        .ref()
+        .child('writePermissionUsers/${user.uid}');
+    final DatabaseEvent event =
+        await currentUserDbRef.once(DatabaseEventType.value);
     hasWritePermission = event.snapshot.value == true;
-    print("Has write permission: $hasWritePermission");
+
+    if (!rebuild) {
+      return;
+    }
     setState(() {
-      hasWritePermission = hasWritePermission;
+      //hasWritePermission = hasWritePermission;
     });
   }
 
@@ -87,31 +101,36 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
       ),
       body: parkingLocations.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: parkingLocations.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                    title: Text(parkingLocations[index].name),
-                    subtitle: Text(parkingLocations[index].address ?? ''),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return ParkingScreen(
-                            parkingLocation: parkingLocations[index],
-                          );
-                        }),
-                      );
-                    });
-              },
+          : RefreshIndicator(
+              onRefresh: () => _refresh(),
+              child: ListView.builder(
+                itemCount: parkingLocations.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                      title: Text(parkingLocations[index].name),
+                      subtitle: Text(parkingLocations[index].address),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return ParkingScreen(
+                              parkingLocation: parkingLocations[index],
+                            );
+                          }),
+                        );
+                      });
+                },
+              ),
             ),
-      floatingActionButton: hasWritePermission ? FloatingActionButton(
-        onPressed: () {
-          // go to screen AddParkingScreen
-          Navigator.pushNamed(context, '/addParking'); // TODO modify all Navigator.push* to use Named routes ! will be better
-        },
-        child: const Icon(Icons.add),
-      ) : null,
+      floatingActionButton: hasWritePermission
+          ? FloatingActionButton(
+              onPressed: () {
+                // go to screen AddParkingScreen
+                Navigator.pushNamed(context, '/addParking');
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

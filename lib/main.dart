@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:parking/screens/add_new_parking_screen.dart';
+import 'package:parking/screens/login_screen.dart';
+import 'package:parking/screens/register_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/choose_parking_screen.dart';
@@ -26,9 +29,12 @@ class MyApp extends StatelessWidget {
       ),
       home: AuthWrapper(),
       routes: {
+        '/auth': (context) => AuthScreen(),
         '/home': (context) => HomeScreen(),
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen(),
         '/chooseParking': (context) => ChooseParkingScreen(),
-        '/authscreen': (context) => AuthScreen(),
+        '/addParking': (context) => NewParkingScreen(),
       },
     );
   }
@@ -41,7 +47,7 @@ class AuthWrapper extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasData && snapshot.data!.emailVerified) {
           return HomeScreen();
         } else {

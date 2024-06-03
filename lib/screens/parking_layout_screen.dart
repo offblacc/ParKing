@@ -22,7 +22,7 @@ class Coordinate {
 class ParkingLayoutScreen extends StatelessWidget {
   final ParkingLocation parkingLocation;
 
-  ParkingLayoutScreen({required this.parkingLocation});
+  const ParkingLayoutScreen({required this.parkingLocation});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,6 @@ class ParkingLayoutScreen extends StatelessWidget {
     // Generating rows with green or red squares
     List<Widget> rows = [];
     for (int i = 0; i < redova; i++) {
-      bool isRow = i % 2 == 0;
       List<Widget> squares = [];
       for (int j = 0; j < stupaca; j++) {
         bool isVisibleSquare = i % 2 == 0;
@@ -48,7 +47,7 @@ class ParkingLayoutScreen extends StatelessWidget {
           Container(
             width: squareSize,
             height: squareSize,
-            margin: EdgeInsets.all(4),
+            margin: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: isVisibleSquare ? color : Colors.transparent,
               border:
@@ -65,17 +64,17 @@ class ParkingLayoutScreen extends StatelessWidget {
       );
       // Add invisible rows in between
       if (i < redova - 1) {
-        rows.add(SizedBox(height: 8));
+        rows.add(const SizedBox(height: 8));
       }
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Parking Layout'),
+        title: const Text('Parking Layout'),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: rows,

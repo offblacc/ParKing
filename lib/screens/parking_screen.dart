@@ -5,16 +5,16 @@ import 'package:parking/screens/parking_layout_screen.dart';
 class ParkingScreen extends StatelessWidget {
   final ParkingLocation parkingLocation;
 
-  ParkingScreen({required this.parkingLocation});
+  const ParkingScreen({required this.parkingLocation});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Parking Details'),
+        title: const Text('Parking Details'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
