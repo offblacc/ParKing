@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:parking/screens/parking_screen.dart';
@@ -12,11 +13,13 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
   final DatabaseReference _parkingRef =
       FirebaseDatabase.instance.ref().child('parkingLocations');
   List<ParkingLocation> parkingLocations = [];
+  bool hasWritePermission = false;
 
   @override
   void initState() {
     super.initState();
     _fetchParkingLocations();
+    _checkUserRootStatus();
   }
 
   Future<void> _fetchParkingLocations() async {
@@ -61,11 +64,26 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
     return;
   }
 
+  Future<void> _checkUserRootStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    } // redundant, has to be logged in, but let's keep this here...
+
+    final currentUserDbRef = FirebaseDatabase.instance.ref().child('writePermissionUsers/${user.uid}');
+    final DatabaseEvent event = await currentUserDbRef.once(DatabaseEventType.value);
+    hasWritePermission = event.snapshot.value == true;
+    print("Has write permission: $hasWritePermission");
+    setState(() {
+      hasWritePermission = hasWritePermission;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Parking Location'),
+        title: const Text('Choose Parking Location'),
       ),
       body: parkingLocations.isEmpty
           ? const Center(child: CircularProgressIndicator())
@@ -87,6 +105,13 @@ class _ChooseParkingScreenState extends State<ChooseParkingScreen> {
                     });
               },
             ),
+      floatingActionButton: hasWritePermission ? FloatingActionButton(
+        onPressed: () {
+          // go to screen AddParkingScreen
+          Navigator.pushNamed(context, '/addParking'); // TODO modify all Navigator.push* to use Named routes ! will be better
+        },
+        child: const Icon(Icons.add),
+      ) : null,
     );
   }
 }
