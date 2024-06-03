@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
-import 'register_screen.dart';
 
 class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Auth Demo'),
+        title: const Text('Auth Demo'),
       ),
       body: Center(
         child: Column(
@@ -15,21 +13,19 @@ class AuthScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                Navigator.pushNamed(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
+                  '/login');
               },
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                Navigator.pushNamed(
                   context,
-                  MaterialPageRoute(builder: (context) => RegisterScreen()),
-                );
+                  '/register');
               },
-              child: Text('Register'),
+              child: const Text('Register'),
             ),
           ],
         ),
