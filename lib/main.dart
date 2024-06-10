@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:parking/screens/add_new_parking_screen.dart';
+import 'package:parking/screens/edit_profile_screen.dart';
 import 'package:parking/screens/login_screen.dart';
+import 'package:parking/screens/my_profile_screen.dart';
 import 'package:parking/screens/register_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
@@ -35,6 +37,8 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegisterScreen(),
         '/chooseParking': (context) => ChooseParkingScreen(),
         '/addParking': (context) => NewParkingScreen(),
+        '/myProfile': (context) => MyProfileScreen(),
+        '/editProfile': (context) => EditProfileScreen(),
       },
     );
   }

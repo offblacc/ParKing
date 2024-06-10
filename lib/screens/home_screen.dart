@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -11,6 +12,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final DatabaseReference _dbRef =
   FirebaseDatabase.instance.ref().child('userCount');
   int userCount = 0;
+  late final User user;
 
   @override
   void initState() {
@@ -18,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _dbRef.onValue.listen((event) {
       setState(() {
         userCount = int.parse(event.snapshot.value.toString());
+        
       });
     });
   }
@@ -121,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ElevatedButton(
               onPressed: () {
                 // Navigate to user profile screen or handle the action as needed
+                Navigator.pushNamed(context, '/myProfile');
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
