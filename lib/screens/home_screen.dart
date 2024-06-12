@@ -70,7 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   leading: const Icon(Icons.person),
                   title: const Text('Moji podaci'),
                   onTap: () {
-                    // Handle the onTap here, if necessary
+                    // Handle the onTap here, if necessarya
+                    Navigator.pushNamed(context, '/myProfile');
                   },
                 ),
               ],
