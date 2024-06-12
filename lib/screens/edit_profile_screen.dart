@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EditProfileScreen extends StatefulWidget {
 
@@ -12,6 +16,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String _userName = "";
   String _profilePictureUrl = "";
   User? user = FirebaseAuth.instance.currentUser;
+  File? chosenPicture;
 
   @override
   void initState() {
@@ -37,6 +42,53 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 }
+
+Future<String?> uploadImageToFirebase(File imageFile) async {
+  final storage = FirebaseStorage.instance;
+  final user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    return null; // Handle case where user is not signed ina
+  }
+
+  final reference = storage.ref().child('images/${user.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+  try {
+    await reference.putFile(imageFile);
+    final downloadUrl = await reference.getDownloadURL();
+    return downloadUrl;
+  } catch (error) {
+    print('Error uploading image: $error');
+    return null;
+  }
+}
+
+Future<bool> requestStoragePermission() async {
+  var status = await Permission.storage.status;
+  if (status.isGranted) {
+    return true;
+  } else {
+    // Request permission if not granted
+    var result = await Permission.storage.request();
+    if (result == PermissionStatus.granted) {
+      return true;
+    }
+    return false;
+  }
+}
+
+Future<File?> pickImageFromGallery() async {
+  print("lmao");
+  requestStoragePermission();
+  final ImagePicker imagePicker = ImagePicker();
+  final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+  if (pickedFile != null) {
+    return File(pickedFile.path);
+  }
+  return null;
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +126,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
 
                 SizedBox(height: 20.0),
+
+                //Choose image button
+                ElevatedButton(
+                  onPressed: () async {
+                    chosenPicture = await pickImageFromGallery();
+
+                    final downloadUrl = uploadImageToFirebase(chosenPicture!);
+                    
+                    _profilePictureUrl = (await downloadUrl)!;
+                    
+                    
+                  },
+                  child: Text('Choose picture from gallery'),
+                ),
 
                 // Save button
                 ElevatedButton(
