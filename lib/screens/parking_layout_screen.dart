@@ -1,7 +1,9 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:parking/models/parking_location.dart';
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
+
 
 
 class Coordinate {
@@ -35,10 +37,15 @@ class _ParkingLayoutScreenState extends State<ParkingLayoutScreen> {
   // Add a state variable to store occupied coordinates (initially empty)
   List<Coordinate> _occupied = [];
   final thingsBoardApiEndpoint = 'http://161.53.19.19:45080';
+  List<String> deviceIDs = ["9bdfc600-299e-11ef-a963-a37ba3a57ce2", "e28a5ca0-296c-11ef-a963-a37ba3a57ce2", "5b42af90-28ea-11ef-a963-a37ba3a57ce2", "035e8570-24ed-11ef-a963-a37ba3a57ce2"];
+  String JWNToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib3JuYS5tYWplcmljQGZlci5ociIsInVzZXJJZCI6ImVhNWM3Y2MwLTE3NWEtMTFlZi1hOTYzLWEzN2JhM2E1N2NlMiIsInNjb3BlcyI6WyJURU5BTlRfQURNSU4iXSwic2Vzc2lvbklkIjoiZjMwMzI4ZjYtM2RjMy00YjI2LThiZmItZjRkMTdhYTdkMmFjIiwiaXNzIjoidGhpbmdzYm9hcmQuaW8iLCJpYXQiOjE3MTgzMTQxMDUsImV4cCI6MTcxODMyMzEwNSwiZmlyc3ROYW1lIjoiQm9ybmEgIiwibGFzdE5hbWUiOiJNYWplcmnEhyIsImVuYWJsZWQiOnRydWUsImlzUHVibGljIjpmYWxzZSwidGVuYW50SWQiOiJkNDcwOWMyMC0xNzVhLTExZWYtYTk2My1hMzdiYTNhNTdjZTIiLCJjdXN0b21lcklkIjoiMTM4MTQwMDAtMWRkMi0xMWIyLTgwODAtODA4MDgwODA4MDgwIn0.o2cIP0IhxWFFBZhcckka2kMdx0tWNMNZ1GiA944Aj71_I2JzLa7yjbnapNGGei7VtgjTQ1L21OQNKrJS6ij94A";
+  String apiTelemetryStart = "/api/plugins/telemetry/DEVICE/";
+  String apiTelemetryEnd = "/values/timeseries";
   // Fetch data from Thingsboard in initState (replace with your actual logic)
 
   Future<List<Coordinate>> _getThingsboardDevices() async {
     List<Coordinate> occupied = [];
+    List<Map<String, dynamic>> JSONDecodedData = [];
 
     var apiPoint = "/api/device/";
 
@@ -46,13 +53,57 @@ class _ParkingLayoutScreenState extends State<ParkingLayoutScreen> {
 
 
     final dio = Dio();
-    final response = await dio.get(thingsBoardApiEndpoint + apiPoint + deviceID);
-    if (response.statusCode == 200) {
-      //return response.data;
-      return occupied; // Response data contains the parsed object
-    } else {
-      throw Exception('Failed to load data'); // Handle errors
+
+    //dio.options.headers["Authorization"] = JWNToken;
+
+    for (String deviceID in deviceIDs) {
+
+      //dohvati podatke
+      debugPrint(thingsBoardApiEndpoint + apiTelemetryStart + deviceID + apiTelemetryEnd);
+      final response = await dio.get(thingsBoardApiEndpoint + apiTelemetryStart + deviceID + apiTelemetryEnd, 
+            options: Options(headers: {
+            "Authorization": "Bearer " + JWNToken,
+            'Content-Type': 'application/json',
+          }));
+
+      if (response.statusCode == 200) {
+
+    
+        
+
+        JSONDecodedData.add(response.data);
+
+      } else {
+        throw Exception('Failed to load data'); // Handle errors
+      }
+
     }
+
+    //Izracunaj polja koja su crvena ili zelena
+    int brojac = 0; //brojac za mjesta
+    for (Map<String, dynamic> response in JSONDecodedData) {
+
+      //provjeri jel isParked == 1 i ako da stavi u occupied koordinate 1, brojac
+
+      if (response["isParked"] != null) {
+        debugPrint(response["isParked"].toString());
+        debugPrint(response["isParked"][0]["value"].toString());
+        if (response["isParked"][0]["value"] == "1") {
+          Coordinate koordinata = Coordinate(x: 0, y: brojac);
+          occupied.add(koordinata);
+
+        }
+
+      }
+
+      brojac += 1;
+
+    }
+
+    
+    return occupied;
+    
+    
     
 
   }
@@ -60,6 +111,7 @@ class _ParkingLayoutScreenState extends State<ParkingLayoutScreen> {
   @override
   void initState() {
     super.initState();
+    
     // Your logic to fetch occupied coordinates from Thingsboard
     // (might involve async operations, potentially update state using setState)
     //ispuniti occupied listu 
@@ -72,7 +124,6 @@ class _ParkingLayoutScreenState extends State<ParkingLayoutScreen> {
     int redova = int.parse(widget.parkingLocation.redova);
     int stupaca = int.parse(widget.parkingLocation.stupaca);
     double squareSize = MediaQuery.of(context).size.width / stupaca * 0.6;
-
     List<Widget> rows = [];
     for (int i = 0; i < redova; i++) {
       List<Widget> squares = [];
