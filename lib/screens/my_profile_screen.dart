@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<MyProfileScreen> {
     User? user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Profile'),
+        title: const Text('My Profile'),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -43,21 +43,21 @@ class _ProfileScreenState extends State<MyProfileScreen> {
             children: [
               // Profile picture section
               Container(
-                margin: EdgeInsets.only(top: 20.0),
+                margin: const EdgeInsets.only(top: 20.0),
                 child: getAvatar(user!),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
           
               // User information section
               Text(
-                "Username: " + (user?.displayName ?? "No username"),
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                "Username: ${user.displayName ?? "No username"}",
+                style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20.0),
-              Text("E-mail: " + (user?.email ?? "No e-mail")),
-              SizedBox(height: 20.0),
-              Text("Verified: " + (user?.emailVerified.toString() ?? "False")),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
+              Text("E-mail: ${user.email ?? "No e-mail"}"),
+              const SizedBox(height: 20.0),
+              Text("Verified: ${user.emailVerified.toString() ?? "False"}"),
+              const SizedBox(height: 20.0),
 
               // Edit profile button (optional)
               ElevatedButton(
@@ -65,7 +65,7 @@ class _ProfileScreenState extends State<MyProfileScreen> {
                   Navigator.pushNamed(context, '/editProfile'); 
                 }, 
                   
-                child: Text('Edit Profile'),
+                child: const Text('Edit Profile'),
               ),
             ],
           ),
