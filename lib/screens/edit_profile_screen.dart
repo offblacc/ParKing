@@ -78,7 +78,7 @@ Future<bool> requestStoragePermission() async {
 }
 
 Future<File?> pickImageFromGallery() async {
-  print("lmao");
+  
   requestStoragePermission();
   final ImagePicker imagePicker = ImagePicker();
   final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
