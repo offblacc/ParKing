@@ -12,6 +12,8 @@ class _LoginScreenState extends State<LoginScreen> {
   late String _email, _password;
   String? _errorMessage;
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         } else if (user != null && user.emailVerified) {
           if (mounted) {
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pushReplacementNamed(context, '/home', arguments: user);
           }
         }
       } catch (e) {
