@@ -38,7 +38,7 @@ class _ParkingLayoutScreenState extends State<ParkingLayoutScreen> {
   List<Coordinate> _occupied = [];
   final thingsBoardApiEndpoint = 'http://161.53.19.19:45080';
   List<String> deviceIDs = ["9bdfc600-299e-11ef-a963-a37ba3a57ce2", "e28a5ca0-296c-11ef-a963-a37ba3a57ce2", "5b42af90-28ea-11ef-a963-a37ba3a57ce2", "035e8570-24ed-11ef-a963-a37ba3a57ce2"];
-  String JWNToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib3JuYS5tYWplcmljQGZlci5ociIsInVzZXJJZCI6ImVhNWM3Y2MwLTE3NWEtMTFlZi1hOTYzLWEzN2JhM2E1N2NlMiIsInNjb3BlcyI6WyJURU5BTlRfQURNSU4iXSwic2Vzc2lvbklkIjoiZjMwMzI4ZjYtM2RjMy00YjI2LThiZmItZjRkMTdhYTdkMmFjIiwiaXNzIjoidGhpbmdzYm9hcmQuaW8iLCJpYXQiOjE3MTgzMTQxMDUsImV4cCI6MTcxODMyMzEwNSwiZmlyc3ROYW1lIjoiQm9ybmEgIiwibGFzdE5hbWUiOiJNYWplcmnEhyIsImVuYWJsZWQiOnRydWUsImlzUHVibGljIjpmYWxzZSwidGVuYW50SWQiOiJkNDcwOWMyMC0xNzVhLTExZWYtYTk2My1hMzdiYTNhNTdjZTIiLCJjdXN0b21lcklkIjoiMTM4MTQwMDAtMWRkMi0xMWIyLTgwODAtODA4MDgwODA4MDgwIn0.o2cIP0IhxWFFBZhcckka2kMdx0tWNMNZ1GiA944Aj71_I2JzLa7yjbnapNGGei7VtgjTQ1L21OQNKrJS6ij94A";
+  String JWNToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib3JuYS5tYWplcmljQGZlci5ociIsInVzZXJJZCI6ImVhNWM3Y2MwLTE3NWEtMTFlZi1hOTYzLWEzN2JhM2E1N2NlMiIsInNjb3BlcyI6WyJURU5BTlRfQURNSU4iXSwic2Vzc2lvbklkIjoiZmI3Yjk3ZTMtZDIwMi00OTc2LWE5ZjMtMGQ4OGQ3M2QwNWFjIiwiaXNzIjoidGhpbmdzYm9hcmQuaW8iLCJpYXQiOjE3MTgzNjkwNzEsImV4cCI6MTcxODM3ODA3MSwiZmlyc3ROYW1lIjoiQm9ybmEgIiwibGFzdE5hbWUiOiJNYWplcmnEhyIsImVuYWJsZWQiOnRydWUsImlzUHVibGljIjpmYWxzZSwidGVuYW50SWQiOiJkNDcwOWMyMC0xNzVhLTExZWYtYTk2My1hMzdiYTNhNTdjZTIiLCJjdXN0b21lcklkIjoiMTM4MTQwMDAtMWRkMi0xMWIyLTgwODAtODA4MDgwODA4MDgwIn0.th2bQgDUoVinzk8Z2EtxWYgpbWyZ5KrcDAtDLlTVLqdPh8onjDhY5DTsTmrD4HDGxZOyeT15cue5Yol0J6NW5Q";
   String apiTelemetryStart = "/api/plugins/telemetry/DEVICE/";
   String apiTelemetryEnd = "/values/timeseries";
   // Fetch data from Thingsboard in initState (replace with your actual logic)
@@ -100,7 +100,7 @@ class _ParkingLayoutScreenState extends State<ParkingLayoutScreen> {
 
     }
 
-    
+    print(occupied.toString());
     return occupied;
     
     
